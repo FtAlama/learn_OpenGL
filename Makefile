@@ -3,7 +3,7 @@ BUILD_DIR := cmake
 CMAKE_FLAGS := -DAPP_NAME=$(APP_NAME)
 LSP_CONFIG := .misc
 
-.PHONY: all debug release run clean reconfigure
+.PHONY: all debug release run clean fclean 
 
 all: debug
 
@@ -17,6 +17,7 @@ debug:
 	mkdir -p $(LSP_CONFIG); \
 	cp -f $(BUILD_DIR)/compile_commands.json $(LSP_CONFIG)
 	cmake --build $(BUILD_DIR)
+	@./$(BUILD_DIR)/$(APP_NAME)
 
 release:
 	@echo "==> Forcing clean & release build..."
@@ -25,8 +26,9 @@ release:
 	@mkdir -p $(LSP_CONFIG) 
 	@cp -f $(BUILD_DIR)/compile_commands.json $(LSP_CONFIG)
 	cmake --build $(BUILD_DIR)
+	@./$(BUILD_DIR)/$(APP_NAME)
 
-run:
+run: 
 	@./$(BUILD_DIR)/$(APP_NAME)
 
 clean:
