@@ -17,7 +17,8 @@ debug:
 	mkdir -p $(LSP_CONFIG); \
 	cp -f $(BUILD_DIR)/compile_commands.json $(LSP_CONFIG)
 	cmake --build $(BUILD_DIR)
-	@./$(BUILD_DIR)/$(APP_NAME)
+	@mv $(BUILD_DIR)/$(APP_NAME) .
+	@./$(APP_NAME)
 
 release:
 	@echo "==> Forcing clean & release build..."
@@ -26,14 +27,14 @@ release:
 	@mkdir -p $(LSP_CONFIG) 
 	@cp -f $(BUILD_DIR)/compile_commands.json $(LSP_CONFIG)
 	cmake --build $(BUILD_DIR)
-	@./$(BUILD_DIR)/$(APP_NAME)
+	@mv $(BUILD_DIR)/$(APP_NAME) .
+	@./$(APP_NAME)
 
 run: 
-	@./$(BUILD_DIR)/$(APP_NAME)
+	@./$(APP_NAME)
 
 clean:
 	rm -rf $(BUILD_DIR)
 
 fclean: clean
-	rm -rf $(LSP_CONFIG)
-
+	rm -rf $(LSP_CONFIG) $(APP_NAME)

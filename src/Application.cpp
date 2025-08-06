@@ -1,7 +1,32 @@
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+#include "Application.hpp"
 #include <iostream>
-#include <string>
+#include <fstream>
+#include <sstream>
+
+static ShaderProgramSource ParseShader(std::string& filepath)
+{
+	enum class ShaderType {
+		NONE = -1, VERTEX = 0, FRAGMENT = 1
+	};
+	ShaderType type = ShaderType::NONE;
+	std::stringstream ss[2];
+	std::string line;
+	std::ifstream stream(filepath);
+
+	while (getline(stream, line))
+	{
+		if (line.find("#shader") != std::string::npos)
+		{
+			if (line.find("vertex") != std::string::npos)
+				type = ShaderType::VERTEX;
+			else if(line.find("fragment") != std::string::npos)
+				type = ShaderType::FRAGMENT;
+		}
+		else 
+			ss[(int)type] << line << "\n";
+	}
+	return { ss[0].str(), ss[1].str() };
+}
 
 static unsigned int	CompileShader(const std::string& source, unsigned int type)
 {
@@ -46,11 +71,14 @@ static unsigned int CreateShaders(const std::string& vertexShader, const std::st
 int main(void)
 {
 	GLFWwindow* window;
-	unsigned int	buff;
-	float					positions[6] = {
+	float				positions[] = {
 		-0.5f, -0.5f,
-		0.0f, 0.5f,
-		0.5f, -0.5f
+		0.5f, -0.5f,
+		0.5f, 0.5f,
+
+		-0.5f, -0.5f,
+		-0.5f, 0.5f,
+		0.5f, 0.5f
 	};
 
   if (!glfwInit())
@@ -62,7 +90,7 @@ int main(void)
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 	#endif
 	
-	window = glfwCreateWindow(640, 480, "simple red triangle", NULL, NULL);
+	window = glfwCreateWindow(640, 480, "simple blue triangle", NULL, NULL);
 	if (!window)
 	{
 		glfwTerminate();
@@ -75,50 +103,35 @@ int main(void)
 		std::cerr << "Failed to initialize GLAD" << std::endl;
 		return -1;
 	}
-	
+
 	unsigned int vao;
+	unsigned int	buff;
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
 	
-	glGenBuffers(1, &buff);
+	glGenBuffers(2, &buff);
 	glBindBuffer(GL_ARRAY_BUFFER, buff);
-	glBufferData(GL_ARRAY_BUFFER, 6 * sizeof(float), positions, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, 6 * 2 * sizeof(float), positions, GL_STATIC_DRAW);
 	glEnableVertexAttribArray(0);
 	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
 
-	std::string vertexShader = 
-		"#version 330 core\n"
-		"\n"
-		"layout (location = 0) in vec4 position;\n"
-		"\n"
-		"void main()\n"
-		"{\n"
-		"	gl_Position = position;\n"
-		"}\n";
-
-	std::string fragmentShader = 
-		"#version 330 core\n"
-		"\n"
-		"layout (location = 0) out vec4 color;\n"
-		"\n"
-		"void main()\n"
-		"{\n"
-		"	color = vec4(1.0, 0.0, 0.0, 1.0);\n"
-		"}\n";
-
-	unsigned int shader = CreateShaders(vertexShader, fragmentShader);
+	std::string filepath("res/shaders/Basic.shader");
+	ShaderProgramSource sh = ParseShader(filepath);
+	unsigned int shader = CreateShaders(sh.vertex_source, sh.fragment_source);
 	glUseProgram(shader);
 
 	while (!glfwWindowShouldClose(window))
 	{
-		glClearColor(0.1f, 1.0f, 0.0f, 1.0f);
+		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
 
-		glDrawArrays(GL_TRIANGLES, 0, 3);
+		glDrawArrays(GL_TRIANGLES, 0, 6);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
+
+	glDeleteProgram(shader);
 	glfwTerminate();
 	return (0);
 }
