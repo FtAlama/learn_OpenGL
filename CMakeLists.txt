@@ -17,6 +17,9 @@ add_subdirectory(external/glfw-3.4)
 # Application
 add_executable(${APP_NAME}
   src/Application.cpp
+	src/GLError.cpp
+	src/ShadersProcess.cpp
+	src/GLCreateVertex.cpp
 )
 
 target_include_directories(${APP_NAME} PRIVATE
