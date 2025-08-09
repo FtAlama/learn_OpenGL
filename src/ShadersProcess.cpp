@@ -1,31 +1,17 @@
 #include "Application.hpp"
 #include <fstream>
-#include <sstream>
 #include <iostream>
+#include <string>
 
-ShaderProgramSource ParseShader(std::string& filepath)
+std::string	ParseShader(std::string& filepath)
 {
-	enum class ShaderType {
-		NONE = -1, VERTEX = 0, FRAGMENT = 1
-	};
-	ShaderType type = ShaderType::NONE;
-	std::stringstream ss[2];
+	std::string	ss;
 	std::string line;
 	std::ifstream stream(filepath);
 
 	while (getline(stream, line))
-	{
-		if (line.find("#shader") != std::string::npos)
-		{
-			if (line.find("vertex") != std::string::npos)
-				type = ShaderType::VERTEX;
-			else if(line.find("fragment") != std::string::npos)
-				type = ShaderType::FRAGMENT;
-		}
-		else if (type != ShaderType::NONE)
-			ss[(int)type] << line << "\n";
-	}
-	return { ss[0].str(), ss[1].str() };
+		ss += line += "\n";
+	return (ss);
 }
 
 unsigned int	CompileShader(const std::string& source, unsigned int type)
@@ -53,18 +39,12 @@ unsigned int	CompileShader(const std::string& source, unsigned int type)
 	return (id);
 }
 
-unsigned int CreateShaders(const std::string& vertexShader, const std::string& fragmentShader)
+void	CreateAndAttachShaders(const std::string& shader, unsigned int type, unsigned int &prog)
 {
-	unsigned int prog = glCreateProgram();
-	unsigned int vs = CompileShader(vertexShader, GL_VERTEX_SHADER);
-	unsigned int fs = CompileShader(fragmentShader, GL_FRAGMENT_SHADER);
+	unsigned int sh = CompileShader(shader, type);
 
-	glAttachShader(prog, vs);
-	glAttachShader(prog, fs);
+	glAttachShader(prog, sh);
 	glLinkProgram(prog);
 	glValidateProgram(prog);
-
-	glDeleteShader(vs);
-	glDeleteShader(fs);
-	return (prog);
+	glDeleteShader(sh);
 }

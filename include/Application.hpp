@@ -5,12 +5,6 @@
 # include <GLFW/glfw3.h>
 # include <string>
 
-struct ShaderProgramSource
-{
-	std::string vertex_source;
-	std::string fragment_source;
-};
-
 // GL error
 # define ASSERT(x) if (!(x)) break;
 void	GLClearError(void);
@@ -19,11 +13,18 @@ bool	GLLogCall(const char *function, const char *file, int line);
 # define GLCHECKCALL(x) GLClearError(); x; GLLogCall(#x, __FILE__, __LINE__)
 
 // Shaders
-ShaderProgramSource ParseShader(std::string& filepath);
+std::string		ParseShader(std::string& filepath);
 unsigned int	CompileShader(const std::string& source, unsigned int type);
-unsigned int CreateShaders(const std::string& vertexShader, const std::string& fragmentShader);
+void				CreateAndAttachShaders(const std::string& shader, unsigned int type, unsigned int &prog);
+
+struct vertex_draw
+{
+	unsigned int vao[2];
+	unsigned int vbo[2];
+};
 
 // Vertex
-void	GLElementVertexRectangle();
+void						GLElementVertexRectangle();
+vertex_draw			GLTwoTriangle();
 
 #endif

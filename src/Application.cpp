@@ -1,5 +1,12 @@
 #include "Application.hpp"
 #include <iostream>
+#include <string>
+
+static void processInput(GLFWwindow *window)
+{
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		glfwSetWindowShouldClose(window, true);
+}
 
 static GLFWwindow* GLinit()
 {
@@ -31,38 +38,54 @@ static GLFWwindow* GLinit()
 int main(void)
 {
 	GLFWwindow*	window;
-	std::string filepath("res/shaders/Basic.shader");
+	std::string vertex_source;
+	std::string fragment_source;
+	
+	std::string vertex("res/shaders/Basic_vertex.shader");
+	std::string fragment("res/shaders/Basic_fragment.shader");
+	std::string yellow_fragment("res/shaders/Yellow_fragment.shader");
 
 	window = GLinit();
 	if (window == nullptr)
 		return (-1);
-	GLElementVertexRectangle();
-	ShaderProgramSource sh = ParseShader(filepath);
-	unsigned int shader = CreateShaders(sh.vertex_source, sh.fragment_source);
-	GLCHECKCALL(glUseProgram(shader));
+	vertex_draw vd = GLTwoTriangle();
 
-	int location = glGetUniformLocation(shader, "u_color");
-	glUseProgram(shader);
-	glUniform4f(location, 0.2f, 0.3f, 0.8f, 1.0f);
+	vertex_source = ParseShader(vertex);
+	fragment_source = ParseShader(fragment);
+	unsigned int shader = glCreateProgram();
+	CreateAndAttachShaders(vertex_source, GL_VERTEX_SHADER, shader);
+	CreateAndAttachShaders(fragment_source, GL_FRAGMENT_SHADER, shader);
 
-	float	r = 0.0f;
-	float	incr = 0.05f;
+	unsigned int shader2 = glCreateProgram();
+	fragment_source = ParseShader(yellow_fragment);
+	CreateAndAttachShaders(vertex_source, GL_VERTEX_SHADER, shader2);
+	CreateAndAttachShaders(fragment_source, GL_FRAGMENT_SHADER, shader2);
+	
+	//glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+	
 	while (!glfwWindowShouldClose(window))
 	{
-		glClearColor(0.2f, 0.2f, 0.2f, 1.0f);
+		processInput(window);
+		glClearColor(0.2f, 0.2f, 0.3f, 1.0f);
 		glClear(GL_COLOR_BUFFER_BIT);
-		glUniform4f(location, r, 0.3f, 0.8f, 1.0f);
-		GLCHECKCALLLoop(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
+		//GLCHECKCALLLoop(glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr));
+		GLCHECKCALLLoop(glUseProgram(shader));
+		int location = glGetUniformLocation(shader, "u_color");
+		glUniform4f(location, 0.2f, 0.5f, 0.2f, 1.0f);
+		glBindVertexArray(vd.vao[0]);
+		glDrawArrays(GL_TRIANGLES, 0, 3);
+
+		GLCHECKCALLLoop(glUseProgram(shader2));
+		glBindVertexArray(vd.vao[1]);
+		glDrawArrays(GL_TRIANGLES, 0, 3);
 		
-		if (r > 1.0f)
-			incr = -0.05f;
-		else if (r < 0.0f)
-			incr = 0.05f;
-		r += incr;
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
+	glDeleteVertexArrays(2, vd.vao);
+	glDeleteVertexArrays(2, vd.vbo);
 	glDeleteProgram(shader);
+	glDeleteProgram(shader2);
 	glfwTerminate();
 	return (0);
 }
