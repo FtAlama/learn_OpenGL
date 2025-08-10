@@ -17,8 +17,8 @@ add_subdirectory(external/glfw-3.4)
 # Application
 add_executable(${APP_NAME}
   src/Application.cpp
-	src/GL_function/GLError.cpp
-	src/GL_function/GLCreateVertex.cpp
+	src/VertexAndShaderBuffer/GLError.cpp
+	src/VertexAndShaderBuffer/GLCreateVertex.cpp
 	src/shaders/Shader.cpp
 	src/shaders/ShadersProcess.cpp
 )
