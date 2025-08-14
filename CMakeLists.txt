@@ -21,11 +21,14 @@ add_executable(${APP_NAME}
 	src/VertexBuffer/GLCreateVertex.cpp
 	src/shaders/Shader.cpp
 	src/shaders/ShadersProcess.cpp
+	src/shaders/textures/Texture.cpp
 )
 
 target_include_directories(${APP_NAME} PRIVATE
   ${CMAKE_SOURCE_DIR}/include
   external/glad/include
+	external/image_format
+	external/glm
 )
 
 target_link_libraries(${APP_NAME} PRIVATE
@@ -39,6 +42,7 @@ target_compile_options(${APP_NAME} PRIVATE
   -Wextra
   -Werror
   -Wno-deprecated-declarations
+	-ferror-limit=0
 )
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")

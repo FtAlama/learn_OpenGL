@@ -1,31 +1,34 @@
 #include "Application.hpp"
 
-void	GLElementVertexRectangle()
+vertex_draw GLElementVertexTexture()
 {
-	unsigned int vao;
-	unsigned int	buff;
+	vertex_draw vd;
 	unsigned int	ibo;	//index_buffer_object
 	float				positions[] = {
-		-0.5f, -0.5f,
-		0.5f, -0.5f,
-		0.5f, 0.5f,
-		-0.5f, 0.5f
+		//positions					//texture
+		0.5f, 0.5f, 0.0f,		1.0f, 1.0f,
+		0.5f, -0.5f, 0.0f,	1.0f, 0.0f,
+		-0.5f, -0.5f, 0.0f,	0.0f, 0.0f,
+		-0.5f, 0.5f, 0.0f,	0.0f, 1.0f
 	};
 	unsigned int	indice[] = {
-		0,1,2,
-		2,3,0
+		0,1,3,
+		1,2,3
 	};
 
-	glGenVertexArrays(1, &vao);
-	glBindVertexArray(vao);
-	glGenBuffers(1, &buff);
-	glBindBuffer(GL_ARRAY_BUFFER, buff);
-	glBufferData(GL_ARRAY_BUFFER, 6 * 2 * sizeof(float), positions, GL_STATIC_DRAW);
-	glGenBuffers(2, &ibo);
+	glGenVertexArrays(1, vd.vao);
+	glBindVertexArray(vd.vao[0]);
+	glGenBuffers(1, vd.vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vd.vbo[0]);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(positions), positions, GL_STATIC_DRAW);
+	glGenBuffers(1, &ibo);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, 6 * sizeof(unsigned int), indice, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, 0);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indice), indice, GL_STATIC_DRAW);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 5, 0);
 	glEnableVertexAttribArray(0);
+	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (void *) (3 * sizeof(float)));
+	glEnableVertexAttribArray(1);
+	return (vd);
 }
 
 vertex_draw	GLTwoTriangle()
