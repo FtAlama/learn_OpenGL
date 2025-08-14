@@ -1,6 +1,7 @@
 #ifndef APPLICATION_HPP
 # define APPLICATION_HPP
 
+#include "fwd.hpp"
 # include <glad/glad.h>
 # include <GLFW/glfw3.h>
 # include <string>
@@ -14,6 +15,11 @@ void			GLClearError(void);
 bool			GLLogCall(const char *function, const char *file, int line);
 # define	GLCHECKCALLLoop(x) GLClearError(); x; ASSERT(GLLogCall(#x, __FILE__, __LINE__))
 # define	GLCHECKCALL(x) GLClearError(); x; GLLogCall(#x, __FILE__, __LINE__)
+
+
+typedef glm::vec3 point;
+
+typedef glm::vec3 vector;
 
 // Shaders
 class Shader
@@ -43,6 +49,22 @@ class Texture
 		int									height;
 		int									nrChannels;
 		unsigned char				*data;
+};
+
+class Camera
+{
+	public:
+		Camera(point pos, point target);
+		void		setTarget(point target);
+		void		setNewDirection();
+		void		setNewUpAxis();
+		void		setNewRightAxis();
+	private:
+		point		pos;
+		point		target;
+		vector	direction;
+		vector	right_axis;
+		vector	up_axis;
 };
 
 // Vertex

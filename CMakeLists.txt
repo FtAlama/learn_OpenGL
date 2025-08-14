@@ -22,6 +22,7 @@ add_executable(${APP_NAME}
 	src/shaders/Shader.cpp
 	src/shaders/ShadersProcess.cpp
 	src/shaders/textures/Texture.cpp
+	src/Scene/Camera.cpp
 )
 
 target_include_directories(${APP_NAME} PRIVATE

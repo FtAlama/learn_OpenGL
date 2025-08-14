@@ -1,4 +1,5 @@
 #include "Application.hpp"
+#include "GLFW/glfw3.h"
 #include "ext/matrix_clip_space.hpp"
 #include "ext/matrix_transform.hpp"
 #include "fwd.hpp"
@@ -99,6 +100,10 @@ int main(void)
 	prog1.setMat4("view", view);
 	prog1.setMat4("projection", projection);
 	float angle = 0;
+	float	radius = 10;
+	float	cam_x;
+	float	cam_z;
+
 	while (!glfwWindowShouldClose(window))
 	{
 		processInput(window);
@@ -110,6 +115,12 @@ int main(void)
 		glBindTexture(GL_TEXTURE_2D, image_one.id);
 		glActiveTexture(GL_TEXTURE1);
 		glBindTexture(GL_TEXTURE_2D, image_two.id);
+
+		cam_x = sin(glfwGetTime()) * radius;
+		cam_z = cos(glfwGetTime()) * radius;
+
+		view = glm::lookAt(glm::vec3(cam_x, 0.0, cam_z), glm::vec3(0, 0, 0), glm::vec3(0, 1.0f, 0));
+		prog1.setMat4("view", view);
 
 		prog1.activate();
 		glBindVertexArray(vd.vao[0]);
