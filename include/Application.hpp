@@ -17,6 +17,9 @@ bool			GLLogCall(const char *function, const char *file, int line);
 # define	GLCHECKCALL(x) GLClearError(); x; GLLogCall(#x, __FILE__, __LINE__)
 
 
+# define WITDH	800
+# define HEIGHT	600
+
 typedef glm::vec3 point;
 
 typedef glm::vec3 vector;
@@ -51,21 +54,6 @@ class Texture
 		unsigned char				*data;
 };
 
-class Camera
-{
-	public:
-		Camera(point pos, point target);
-		void		setTarget(point target);
-		void		setNewDirection();
-		void		setNewUpAxis();
-		void		setNewRightAxis();
-	private:
-		point		pos;
-		point		target;
-		vector	direction;
-		vector	right_axis;
-		vector	up_axis;
-};
 
 // Vertex
 struct vertex_draw
@@ -76,5 +64,6 @@ struct vertex_draw
 
 vertex_draw			GLTwoTriangle();
 vertex_draw			GLElementVertexTexture();
+
 
 #endif
