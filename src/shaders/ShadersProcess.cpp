@@ -17,7 +17,7 @@ std::string	Shader::ParseShaderFile(const char *filepath)
 		shader_file.close();
 		shader_code = shader_stream.str();
 	}
-	catch (std::ifstream::failure e) {
+	catch (std::ifstream::failure &e) {
 		std::cout << "Error: file shader not succesfully read\n";
 	}
 	return (shader_code);
